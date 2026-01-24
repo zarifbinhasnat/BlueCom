@@ -1,19 +1,23 @@
-# Python bytecode
-__pycache__/
-*.py[cod]
-*$py.class
+# AI
+AGENTS.md
 
-# Virtual environments
-venv/
-env/
-.venv/
+# my own stuff
+ignore/*
 
 # Database files
 *.db
+*.sqlite
+*.sqlite3
 
-# Environment variables (credentials)
-.env
+# PostgreSQL dumps
+*.sql.backup
+*.dump
 
 # IDE specific
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+
