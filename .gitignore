@@ -1,17 +1,8 @@
-# Python bytecode
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# Virtual environments
-venv/
-env/
-.venv/
-ENV/
-
 # AI
 AGENTS.md
+
+# my own stuff
+ignore/*
 
 # Database files
 *.db
@@ -22,10 +13,6 @@ AGENTS.md
 *.sql.backup
 *.dump
 
-# Environment variables (credentials)
-.env
-.env.local
-
 # IDE specific
 .vscode/
 .idea/
@@ -33,14 +20,4 @@ AGENTS.md
 *.swo
 *~
 
-# OS specific
-.DS_Store
-Thumbs.db
 
-# Logs
-*.log
-
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
