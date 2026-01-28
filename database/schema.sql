@@ -2,11 +2,15 @@
 -- Bluecon Aquaculture Management System - Database Schema
 -- ============================================================================
 -- PostgreSQL 14+
--- Date: 2026-01-24
+-- Date: 2026-01-28
+-- Update: Added Security, Compliance, and Alerting modules
 -- Description: Complete schema for fish farm management from hatchery to delivery
 -- ============================================================================
 
 -- Drop existing tables (in reverse dependency order)
+DROP TABLE IF EXISTS shipment_certification CASCADE;
+DROP TABLE IF EXISTS certification_type CASCADE;
+DROP TABLE IF EXISTS alert CASCADE;
 DROP TABLE IF EXISTS shipment_detail CASCADE;
 DROP TABLE IF EXISTS shipment CASCADE;
 DROP TABLE IF EXISTS order_item CASCADE;
@@ -20,6 +24,38 @@ DROP TABLE IF EXISTS batch CASCADE;
 DROP TABLE IF EXISTS tank CASCADE;
 DROP TABLE IF EXISTS farm CASCADE;
 DROP TABLE IF EXISTS species CASCADE;
+DROP TABLE IF EXISTS app_user CASCADE;
+DROP TABLE IF EXISTS user_role CASCADE;
+
+-- ============================================================================
+-- SECURITY & ACCESS CONTROL
+-- ============================================================================
+
+-- Table: user_role
+-- Purpose: Role-based access control (RBAC) definitions
+CREATE TABLE user_role (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) NOT NULL UNIQUE, -- e.g., 'admin', 'farm_manager', 'worker'
+    description TEXT
+);
+
+COMMENT ON TABLE user_role IS 'Defines user permission levels';
+
+-- Table: app_user
+-- Purpose: System users with login credentials
+CREATE TABLE app_user (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100),
+    role_id INT NOT NULL REFERENCES user_role(role_id),
+    email VARCHAR(100) UNIQUE,
+    farm_id INT, -- Optional: link user to specific farm if applicable
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+COMMENT ON TABLE app_user IS 'Registered users of the application';
 
 -- ============================================================================
 -- MASTER DATA TABLES
@@ -35,7 +71,10 @@ CREATE TABLE species (
     target_profit_margin DECIMAL(5,2) NOT NULL CHECK (target_profit_margin >= 1.0),
     ideal_temp_min DECIMAL(4,2),
     ideal_temp_max DECIMAL(4,2),
-    CONSTRAINT check_temp_range CHECK (ideal_temp_min < ideal_temp_max)
+    ideal_ph_min DECIMAL(4,2),
+    ideal_ph_max DECIMAL(4,2),
+    CONSTRAINT check_temp_range CHECK (ideal_temp_min < ideal_temp_max),
+    CONSTRAINT check_ph_range CHECK (ideal_ph_min < ideal_ph_max)
 );
 
 COMMENT ON TABLE species IS 'Fish species catalog with breeding specifications';
@@ -55,6 +94,9 @@ CREATE TABLE farm (
 
 COMMENT ON TABLE farm IS 'Fish farm locations managed by the system';
 
+-- Add foreign key to app_user now that farm exists
+ALTER TABLE app_user ADD CONSTRAINT fk_user_farm FOREIGN KEY (farm_id) REFERENCES farm(farm_id) ON DELETE SET NULL;
+
 -- Table: tank
 -- Purpose: Individual tanks/ponds within farms
 CREATE TABLE tank (
@@ -68,10 +110,20 @@ CREATE TABLE tank (
 );
 
 COMMENT ON TABLE tank IS 'Storage units (tanks/ponds) holding fish batches';
-COMMENT ON COLUMN tank.max_capacity IS 'Maximum number of fish the tank can hold';
 
 CREATE INDEX idx_tank_farm ON tank(farm_id);
 CREATE INDEX idx_tank_status ON tank(status);
+
+-- Table: certification_type
+-- Purpose: Types of certificates (CITES, Health, Origin)
+CREATE TABLE certification_type (
+    cert_type_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE, 
+    issuing_authority VARCHAR(100),
+    description TEXT
+);
+
+COMMENT ON TABLE certification_type IS 'Catalog of required trade certificates';
 
 -- ============================================================================
 -- OPERATIONAL DATA TABLES
@@ -93,13 +145,10 @@ CREATE TABLE batch (
 );
 
 COMMENT ON TABLE batch IS 'Groups of fish tracked from birth to harvest';
-COMMENT ON COLUMN batch.initial_quantity IS 'Starting fish count at birth/purchase';
-COMMENT ON COLUMN batch.current_quantity IS 'Remaining fish after mortality/shipments';
 
 CREATE INDEX idx_batch_species ON batch(species_id);
 CREATE INDEX idx_batch_tank ON batch(tank_id);
 CREATE INDEX idx_batch_status ON batch(status);
-CREATE INDEX idx_batch_birth_date ON batch(birth_date);
 
 -- Table: batch_financials
 -- Purpose: Cost tracking per batch
@@ -115,7 +164,6 @@ CREATE TABLE batch_financials (
 );
 
 COMMENT ON TABLE batch_financials IS 'Accumulated costs for each batch';
-COMMENT ON COLUMN batch_financials.total_feed_cost IS 'Auto-updated by feeding_log trigger';
 
 CREATE INDEX idx_financials_batch ON batch_financials(batch_id);
 
@@ -128,14 +176,13 @@ CREATE TABLE feeding_log (
     amount_grams DECIMAL(10,2) NOT NULL CHECK (amount_grams > 0),
     feed_type VARCHAR(50) NOT NULL,
     cost_per_kg DECIMAL(10,2) NOT NULL CHECK (cost_per_kg > 0),
+    recorded_by INT REFERENCES app_user(user_id), -- Linked to user
     notes TEXT
 );
 
 COMMENT ON TABLE feeding_log IS 'Historical record of all feeding events';
-COMMENT ON COLUMN feeding_log.cost_per_kg IS 'Cost per kilogram of feed (for financial tracking)';
 
 CREATE INDEX idx_feeding_batch ON feeding_log(batch_id);
-CREATE INDEX idx_feeding_time ON feeding_log(feed_time);
 
 -- Table: health_log
 -- Purpose: Track mortality and health events
@@ -146,13 +193,12 @@ CREATE TABLE health_log (
     mortality_count INT DEFAULT 0 CHECK (mortality_count >= 0),
     disease_detected VARCHAR(100),
     treatment_given TEXT,
-    recorded_by VARCHAR(100)
+    recorded_by INT REFERENCES app_user(user_id) -- Linked to user
 );
 
 COMMENT ON TABLE health_log IS 'Health monitoring and mortality tracking';
 
 CREATE INDEX idx_health_batch ON health_log(batch_id);
-CREATE INDEX idx_health_date ON health_log(recorded_date);
 
 -- Table: water_log
 -- Purpose: Water quality monitoring per tank
@@ -164,16 +210,33 @@ CREATE TABLE water_log (
     temperature DECIMAL(5,2),
     dissolved_oxygen DECIMAL(5,2) CHECK (dissolved_oxygen >= 0),
     ammonia_level DECIMAL(6,3) CHECK (ammonia_level >= 0),
-    status VARCHAR(20) DEFAULT 'normal' CHECK (status IN ('normal', 'warning', 'critical'))
+    status VARCHAR(20) DEFAULT 'normal' CHECK (status IN ('normal', 'warning', 'critical')),
+    recorded_by INT REFERENCES app_user(user_id)
 );
 
 COMMENT ON TABLE water_log IS 'Water quality measurements for environmental monitoring';
-COMMENT ON COLUMN water_log.dissolved_oxygen IS 'Dissolved oxygen in mg/L';
-COMMENT ON COLUMN water_log.ammonia_level IS 'Ammonia concentration in ppm';
 
 CREATE INDEX idx_water_tank ON water_log(tank_id);
-CREATE INDEX idx_water_time ON water_log(measured_at);
-CREATE INDEX idx_water_status ON water_log(status);
+
+-- Table: alert
+-- Purpose: System-generated or manual alerts for critical conditions
+CREATE TABLE alert (
+    alert_id SERIAL PRIMARY KEY,
+    severity VARCHAR(20) CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+    alert_type VARCHAR(50) NOT NULL, -- e.g., 'PH_HIGH', 'MORTALITY_SPIKE'
+    message TEXT NOT NULL,
+    tank_id INT REFERENCES tank(tank_id) ON DELETE CASCADE,
+    batch_id INT REFERENCES batch(batch_id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP,
+    resolved_by INT REFERENCES app_user(user_id),
+    status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'acknowledged', 'resolved'))
+);
+
+COMMENT ON TABLE alert IS 'Active and historical alerts requiring attention';
+
+CREATE INDEX idx_alert_status ON alert(status);
+CREATE INDEX idx_alert_tank ON alert(tank_id);
 
 -- ============================================================================
 -- COMMERCIAL DATA TABLES
@@ -193,11 +256,8 @@ CREATE TABLE customer (
 
 COMMENT ON TABLE customer IS 'Fish buyers and distributors';
 
-CREATE INDEX idx_customer_company ON customer(company_name);
-
 -- Table: customer_order
 -- Purpose: Customer purchase orders
--- Note: Renamed from "order" to avoid SQL keyword conflict
 CREATE TABLE customer_order (
     order_id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL REFERENCES customer(customer_id) ON DELETE RESTRICT,
@@ -205,14 +265,13 @@ CREATE TABLE customer_order (
     total_value DECIMAL(12,2) NOT NULL CHECK (total_value >= 0),
     delivery_address TEXT,
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
+    created_by INT REFERENCES app_user(user_id),
     notes TEXT
 );
 
-COMMENT ON TABLE customer_order IS 'Customer purchase orders (not yet fulfilled)';
+COMMENT ON TABLE customer_order IS 'Customer purchase orders';
 
 CREATE INDEX idx_order_customer ON customer_order(customer_id);
-CREATE INDEX idx_order_date ON customer_order(order_date);
-CREATE INDEX idx_order_status ON customer_order(status);
 
 -- Table: order_item
 -- Purpose: Line items in a customer order
@@ -226,10 +285,6 @@ CREATE TABLE order_item (
 );
 
 COMMENT ON TABLE order_item IS 'Individual line items within customer orders';
-COMMENT ON COLUMN order_item.line_total IS 'Auto-calculated: quantity × unit_price';
-
-CREATE INDEX idx_order_item_order ON order_item(order_id);
-CREATE INDEX idx_order_item_species ON order_item(species_id);
 
 -- Table: shipment
 -- Purpose: Fulfillment of customer orders
@@ -249,8 +304,6 @@ CREATE TABLE shipment (
 COMMENT ON TABLE shipment IS 'Physical delivery of fish to customers';
 
 CREATE INDEX idx_shipment_order ON shipment(order_id);
-CREATE INDEX idx_shipment_date ON shipment(shipment_date);
-CREATE INDEX idx_shipment_status ON shipment(status);
 
 -- Table: shipment_detail
 -- Purpose: Which batches were allocated to each shipment
@@ -263,16 +316,27 @@ CREATE TABLE shipment_detail (
 );
 
 COMMENT ON TABLE shipment_detail IS 'Batch allocation details for each shipment';
-COMMENT ON COLUMN shipment_detail.batch_cost_at_shipment IS 'Snapshot of per-unit cost when shipped';
 
-CREATE INDEX idx_shipment_detail_shipment ON shipment_detail(shipment_id);
-CREATE INDEX idx_shipment_detail_batch ON shipment_detail(batch_id);
+-- Table: shipment_certification
+-- Purpose: Linking required docs to international shipments
+CREATE TABLE shipment_certification (
+    ship_cert_id SERIAL PRIMARY KEY,
+    shipment_id INT NOT NULL REFERENCES shipment(shipment_id) ON DELETE CASCADE,
+    cert_type_id INT NOT NULL REFERENCES certification_type(cert_type_id),
+    certificate_number VARCHAR(100) NOT NULL,
+    issue_date DATE NOT NULL,
+    expiry_date DATE,
+    document_url TEXT
+);
+
+COMMENT ON TABLE shipment_certification IS 'Compliance documents attached to shipments';
 
 -- ============================================================================
 -- SUMMARY
 -- ============================================================================
--- Total Tables: 13
--- Master Data: species, farm, tank
--- Operational: batch, batch_financials, feeding_log, health_log, water_log
--- Commercial: customer, customer_order, order_item, shipment, shipment_detail
+-- Total Tables: 18
+-- Security: user_role, app_user
+-- Master Data: species, farm, tank, certification_type
+-- Operational: batch, batch_financials, feeding_log, health_log, water_log, alert
+-- Commercial: customer, customer_order, order_item, shipment, shipment_detail, shipment_certification
 -- ============================================================================
