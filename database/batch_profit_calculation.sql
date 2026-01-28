@@ -10,7 +10,7 @@
 -- Parameters: p_batch_id (INT) - The batch to calculate profit for
 -- Returns: DECIMAL(12,2) - Net profit (can be negative for losses)
 -- ============================================================================
-
+-- trial
 CREATE OR REPLACE FUNCTION calculate_batch_profit(p_batch_id INT)
 RETURNS DECIMAL(12,2)
 LANGUAGE plpgsql
