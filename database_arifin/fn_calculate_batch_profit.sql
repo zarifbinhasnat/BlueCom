@@ -1,3 +1,10 @@
+-- FUNCTION_METADATA
+-- name: calculate_batch_profit
+-- params: p_batch_id:INT
+-- description: Calculate total profit for a batch (revenue - costs)
+-- returns: DECIMAL
+-- END_METADATA
+
 -- Function: calculate_batch_profit
 -- Purpose: Calculate total profit for a batch (revenue - costs)
 -- Source: extracted from batch_profit_calculation.sql

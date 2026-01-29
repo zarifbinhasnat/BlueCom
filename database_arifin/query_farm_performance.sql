@@ -1,8 +1,7 @@
--- View: v_farm_performance_summary
+-- Query: Farm Performance Summary
 -- Purpose: High-level dashboard for farm operations and health status
 -- Source: extracted from business_logic.sql
 
-CREATE OR REPLACE VIEW v_farm_performance_summary AS
 SELECT 
     f.farm_id,
     f.farm_name,

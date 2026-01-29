@@ -1,8 +1,7 @@
--- View: v_traceability_report
+-- Query: Traceability Report
 -- Purpose: Complete traceability from farm to customer for each shipment
 -- Source: extracted from business_logic.sql
 
-CREATE OR REPLACE VIEW v_traceability_report AS
 SELECT 
     sh.shipment_id,
     sh.airway_bill_no,

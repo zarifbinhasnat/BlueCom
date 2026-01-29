@@ -1,8 +1,7 @@
--- View: v_active_biosecurity_alerts
+-- Query: Active Biosecurity Alerts
 -- Purpose: Shows all unresolved water quality alerts requiring immediate action
 -- Source: extracted from business_logic.sql
 
-CREATE OR REPLACE VIEW v_active_biosecurity_alerts AS
 SELECT 
     a.alert_id,
     a.severity,

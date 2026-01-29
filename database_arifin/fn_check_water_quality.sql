@@ -1,3 +1,10 @@
+-- FUNCTION_METADATA
+-- name: check_water_quality_compliance
+-- params: p_tank_id:INT
+-- description: Compares water log readings against species ideal parameters
+-- returns: TABLE
+-- END_METADATA
+
 -- Function: check_water_quality_compliance
 -- Purpose: Compares water log readings against species ideal parameters
 -- Source: extracted from business_logic.sql

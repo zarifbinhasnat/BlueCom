@@ -1,8 +1,7 @@
--- View: v_species_mortality_analysis
+-- Query: Species Mortality Analysis
 -- Purpose: Mortality rates by species to identify high-risk breeds
 -- Source: extracted from business_logic.sql
 
-CREATE OR REPLACE VIEW v_species_mortality_analysis AS
 SELECT 
     sp.species_id,
     sp.common_name,

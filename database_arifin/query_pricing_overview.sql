@@ -1,8 +1,7 @@
--- View: v_batch_pricing_overview
+-- Query: Batch Pricing Overview
 -- Purpose: Production costs and recommended selling prices for saleable batches
 -- Source: extracted from business_logic.sql
 
-CREATE OR REPLACE VIEW v_batch_pricing_overview AS
 SELECT 
     b.batch_id,
     sp.common_name AS species,

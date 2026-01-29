@@ -1,3 +1,10 @@
+-- FUNCTION_METADATA
+-- name: get_batch_traceability
+-- params: p_batch_id:INT
+-- description: Returns complete history for a specific batch
+-- returns: TABLE
+-- END_METADATA
+
 -- Function: get_batch_traceability
 -- Purpose: Returns complete history for a specific batch
 -- Source: extracted from business_logic.sql

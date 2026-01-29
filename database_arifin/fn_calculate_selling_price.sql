@@ -1,3 +1,10 @@
+-- FUNCTION_METADATA
+-- name: calculate_selling_price
+-- params: p_batch_id:INT,p_transport_cost:DECIMAL,p_packaging_cost:DECIMAL
+-- description: Returns recommended selling price with profit margin applied
+-- returns: DECIMAL
+-- END_METADATA
+
 -- Function: calculate_selling_price
 -- Purpose: Returns recommended selling price with profit margin applied
 -- Source: extracted from business_logic.sql
