@@ -41,68 +41,68 @@ INSERT INTO farm (farm_name, location, manager_name, phone, established_date) VA
 -- MASTER DATA: Tanks (3 per farm = 12 total)
 -- ============================================================================
 
-INSERT INTO tank (farm_id, tank_name, volume_liters, max_capacity, status) VALUES
+INSERT INTO tank (farm_id, tank_name, tank_type, volume_liters, is_active) VALUES
 -- Dhaka Aqua Center (farm_id: 1)
-(1, 'Tank-A1', 50000.00, 5000, 'active'),
-(1, 'Tank-A2', 75000.00, 7500, 'active'),
-(1, 'Nursery-A', 30000.00, 3000, 'active'),
+(1, 'Tank-A1', 'Recirculating', 50000.00, TRUE),
+(1, 'Tank-A2', 'Recirculating', 75000.00, TRUE),
+(1, 'Nursery-A', 'Pond', 30000.00, TRUE),
 
 -- Chittagong Coastal Farms (farm_id: 2)
-(2, 'Pond-B1', 100000.00, 10000, 'active'),
-(2, 'Pond-B2', 120000.00, 12000, 'active'),
-(2, 'Hatchery-B', 25000.00, 2500, 'maintenance'),
+(2, 'Pond-B1', 'Pond', 100000.00, TRUE),
+(2, 'Pond-B2', 'Pond', 120000.00, TRUE),
+(2, 'Hatchery-B', 'Recirculating', 25000.00, FALSE),
 
 -- Khulna Delta Fisheries (farm_id: 3)
-(3, 'Delta-C1', 80000.00, 8000, 'active'),
-(3, 'Delta-C2', 90000.00, 9000, 'active'),
-(3, 'Breeding-C', 40000.00, 4000, 'active'),
+(3, 'Delta-C1', 'Recirculating', 80000.00, TRUE),
+(3, 'Delta-C2', 'Recirculating', 90000.00, TRUE),
+(3, 'Breeding-C', 'Pond', 40000.00, TRUE),
 
 -- Sylhet Freshwater Ltd (farm_id: 4)
-(4, 'Fresh-D1', 60000.00, 6000, 'active'),
-(4, 'Fresh-D2', 70000.00, 7000, 'active'),
-(4, 'Grow-D', 55000.00, 5500, 'active');
+(4, 'Fresh-D1', 'Recirculating', 60000.00, TRUE),
+(4, 'Fresh-D2', 'Flow-through', 70000.00, TRUE),
+(4, 'Grow-D', 'Pond', 55000.00, TRUE);
 
 -- ============================================================================
 -- OPERATIONAL DATA: Batches (25 batches with varied status)
 -- ============================================================================
 
-INSERT INTO batch (species_id, tank_id, birth_date, initial_quantity, current_quantity, status, estimated_harvest_date) VALUES
+INSERT INTO batch (species_id, tank_id, birth_date, initial_quantity, current_quantity, stage, estimated_harvest_date) VALUES
 -- Active batches (currently growing)
-(1, 1, '2025-11-01', 4500, 4320, 'active', '2026-03-01'),  -- Tilapia
-(2, 1, '2025-12-15', 2000, 1950, 'active', '2026-04-15'),  -- Catfish
-(3, 2, '2025-10-20', 7000, 6800, 'active', '2026-02-20'),  -- Pangas
-(4, 3, '2026-01-05', 2800, 2800, 'active', '2026-05-05'),  -- Rui (just started)
-(5, 4, '2025-12-01', 9500, 9200, 'active', '2026-03-15'),  -- Shrimp
+(1, 1, '2025-11-01', 4500, 4320, 'Adult', '2026-03-01'),  -- Tilapia
+(2, 1, '2025-12-15', 2000, 1950, 'Juvenile', '2026-04-15'),  -- Catfish
+(3, 2, '2025-10-20', 7000, 6800, 'Adult', '2026-02-20'),  -- Pangas
+(4, 3, '2026-01-05', 2800, 2800, 'Fry', '2026-05-05'),  -- Rui (just started)
+(5, 4, '2025-12-01', 9500, 9200, 'Juvenile', '2026-03-15'),  -- Shrimp
 
-(1, 5, '2025-11-20', 11000, 10500, 'active', '2026-03-20'), -- Tilapia
-(2, 7, '2025-12-10', 7500, 7200, 'active', '2026-04-10'),  -- Catfish
-(3, 8, '2025-10-15', 8500, 8300, 'active', '2026-02-15'),  -- Pangas
-(4, 9, '2025-11-25', 3800, 3650, 'active', '2026-03-25'),  -- Rui
-(5, 10, '2025-12-20', 5800, 5600, 'active', '2026-04-01'), -- Shrimp
+(1, 5, '2025-11-20', 11000, 10500, 'Adult', '2026-03-20'), -- Tilapia
+(2, 7, '2025-12-10', 7500, 7200, 'Juvenile', '2026-04-10'),  -- Catfish
+(3, 8, '2025-10-15', 8500, 8300, 'Adult', '2026-02-15'),  -- Pangas
+(4, 9, '2025-11-25', 3800, 3650, 'Juvenile', '2026-03-25'),  -- Rui
+(5, 10, '2025-12-20', 5800, 5600, 'Juvenile', '2026-04-01'), -- Shrimp
 
-(1, 11, '2025-11-30', 6500, 6200, 'active', '2026-03-30'), -- Tilapia
-(3, 12, '2025-12-05', 5200, 5000, 'active', '2026-04-05'), -- Pangas
+(1, 11, '2025-11-30', 6500, 6200, 'Adult', '2026-03-30'), -- Tilapia
+(3, 12, '2025-12-05', 5200, 5000, 'Juvenile', '2026-04-05'), -- Pangas
 
 -- Harvesting batches (ready for sale)
-(1, 2, '2025-08-01', 5000, 4800, 'harvesting', '2025-12-01'),
-(2, 4, '2025-07-15', 8000, 7500, 'harvesting', '2025-11-15'),
-(3, 7, '2025-08-20', 6500, 6200, 'harvesting', '2025-12-20'),
+(1, 2, '2025-08-01', 5000, 4800, 'Ready for Sale', '2025-12-01'),
+(2, 4, '2025-07-15', 8000, 7500, 'Ready for Sale', '2025-11-15'),
+(3, 7, '2025-08-20', 6500, 6200, 'Ready for Sale', '2025-12-20'),
 
 -- Completed batches (fully sold/harvested)
-(1, 1, '2025-05-10', 4000, 0, 'completed', '2025-09-10'),
-(2, 3, '2025-04-15', 3500, 0, 'completed', '2025-08-15'),
-(3, 5, '2025-06-01', 9000, 0, 'completed', '2025-10-01'),
-(4, 8, '2025-05-20', 3200, 0, 'completed', '2025-09-20'),
-(5, 10, '2025-07-01', 7000, 0, 'completed', '2025-11-01'),
+(1, 1, '2025-05-10', 4000, 0, 'Adult', '2025-09-10'),
+(2, 3, '2025-04-15', 3500, 0, 'Adult', '2025-08-15'),
+(3, 5, '2025-06-01', 9000, 0, 'Adult', '2025-10-01'),
+(4, 8, '2025-05-20', 3200, 0, 'Adult', '2025-09-20'),
+(5, 10, '2025-07-01', 7000, 0, 'Adult', '2025-11-01'),
 
 -- Problematic batches (high mortality)
-(1, 7, '2025-10-01', 5000, 3200, 'active', '2026-02-01'),  -- 36% loss
-(2, 9, '2025-11-10', 4000, 2800, 'active', '2026-03-10'),  -- 30% loss
-(4, 11, '2025-10-25', 3000, 2100, 'active', '2026-02-25'), -- 30% loss
+(1, 7, '2025-10-01', 5000, 3200, 'Juvenile', '2026-02-01'),  -- 36% loss
+(2, 9, '2025-11-10', 4000, 2800, 'Juvenile', '2026-03-10'),  -- 30% loss
+(4, 11, '2025-10-25', 3000, 2100, 'Juvenile', '2026-02-25'), -- 30% loss
 
 -- Recent batches with minimal activity
-(3, 3, '2026-01-15', 6000, 6000, 'active', '2026-05-15'),
-(5, 12, '2026-01-10', 4500, 4500, 'active', '2026-04-25');
+(3, 3, '2026-01-15', 6000, 6000, 'Fry', '2026-05-15'),
+(5, 12, '2026-01-10', 4500, 4500, 'Fry', '2026-04-25');
 
 -- ============================================================================
 -- OPERATIONAL DATA: Batch Financials (1:1 with batches)
@@ -157,7 +157,7 @@ INSERT INTO batch_financials (batch_id, total_feed_cost, total_labor_cost, water
 
 -- Generate feeding logs for active batches (last 60 days)
 -- Batch 1 (Tilapia) - Regular feeding schedule
-INSERT INTO feeding_log (batch_id, feed_time, amount_grams, feed_type, cost_per_kg, notes) VALUES
+INSERT INTO feeding_log (batch_id, feed_time, amount_grams, food_type, cost_per_kg, notes) VALUES
 (1, '2025-11-02 08:00:00', 4500, 'starter', 150.00, 'First feeding'),
 (1, '2025-11-02 16:00:00', 4500, 'starter', 150.00, 'Evening feed'),
 (1, '2025-11-10 08:00:00', 5000, 'grower', 120.00, 'Switched to grower feed'),
@@ -272,7 +272,7 @@ INSERT INTO feeding_log (batch_id, feed_time, amount_grams, feed_type, cost_per_
 (25, '2026-01-11 18:00:00', 5000, 'shrimp_pellets', 280.00, NULL);
 
 -- Additional 30+ feeding logs to reach 120 total (simplified)
-INSERT INTO feeding_log (batch_id, feed_time, amount_grams, feed_type, cost_per_kg) VALUES
+INSERT INTO feeding_log (batch_id, feed_time, amount_grams, food_type, cost_per_kg) VALUES
 (1, '2026-01-15 08:00:00', 7000, 'finisher', 110.00),
 (1, '2026-01-15 16:00:00', 7000, 'finisher', 110.00),
 (3, '2026-01-20 07:00:00', 12500, 'finisher', 115.00),
@@ -301,46 +301,46 @@ INSERT INTO feeding_log (batch_id, feed_time, amount_grams, feed_type, cost_per_
 -- ============================================================================
 
 -- Healthy batches (minimal issues)
-INSERT INTO health_log (batch_id, recorded_date, mortality_count, disease_detected, treatment_given, recorded_by) VALUES
-(1, '2025-11-15', 50, NULL, NULL, 'Dr. Karim'),
-(1, '2025-12-01', 80, NULL, NULL, 'Dr. Karim'),
-(1, '2025-12-20', 50, NULL, NULL, 'Staff'),
+INSERT INTO health_log (batch_id, log_date, mortality_count, condition_notes, treatment_applied) VALUES
+(1, '2025-11-15', 50, 'Regular monitoring', NULL),
+(1, '2025-12-01', 80, 'Routine check', NULL),
+(1, '2025-12-20', 50, 'All healthy', NULL),
 
-(3, '2025-11-05', 100, NULL, NULL, 'Dr. Rahman'),
-(3, '2025-11-25', 50, NULL, NULL, 'Dr. Rahman'),
-(3, '2025-12-15', 50, NULL, NULL, 'Staff'),
+(3, '2025-11-05', 100, 'Normal mortality', NULL),
+(3, '2025-11-25', 50, 'Good health', NULL),
+(3, '2025-12-15', 50, 'Routine check', NULL),
 
-(5, '2025-12-10', 150, NULL, NULL, 'Dr. Akter'),
-(5, '2025-12-28', 100, NULL, NULL, 'Staff'),
-(5, '2026-01-12', 50, NULL, NULL, 'Dr. Akter'),
+(5, '2025-12-10', 150, 'Expected loss', NULL),
+(5, '2025-12-28', 100, 'Normal range', NULL),
+(5, '2026-01-12', 50, 'Healthy batch', NULL),
 
 -- Moderate issues
-(2, '2025-12-20', 30, 'Fungal infection', 'Antifungal treatment', 'Dr. Karim'),
-(2, '2026-01-10', 20, NULL, 'Preventive care', 'Staff'),
+(2, '2025-12-20', 30, 'Fungal infection observed', 'Antifungal treatment'),
+(2, '2026-01-10', 20, 'Improving condition', 'Preventive care'),
 
-(6, '2025-12-05', 200, 'Gill disease', 'Antibiotics', 'Dr. Rahman'),
-(6, '2025-12-25', 150, NULL, 'Follow-up treatment', 'Dr. Rahman'),
-(6, '2026-01-15', 150, NULL, NULL, 'Staff'),
+(6, '2025-12-05', 200, 'Gill disease detected', 'Antibiotics administered'),
+(6, '2025-12-25', 150, 'Treatment ongoing', 'Follow-up treatment'),
+(6, '2026-01-15', 150, 'Recovery phase', NULL),
 
-(9, '2025-12-10', 80, 'Parasites', 'Anti-parasitic', 'Dr. Ali'),
-(9, '2026-01-05', 70, NULL, 'Follow-up', 'Staff'),
+(9, '2025-12-10', 80, 'Parasites found', 'Anti-parasitic treatment'),
+(9, '2026-01-05', 70, 'Condition stabilized', 'Follow-up'),
 
 -- High mortality batches (problematic)
-(21, '2025-10-15', 300, 'Bacterial infection', 'Broad-spectrum antibiotics', 'Dr. Karim'),
-(21, '2025-11-01', 500, 'Bacterial infection', 'Increased medication', 'Dr. Karim'),
-(21, '2025-11-20', 400, 'Bacterial infection', 'Continued treatment', 'Dr. Rahman'),
-(21, '2025-12-10', 300, NULL, 'Preventive care', 'Staff'),
-(21, '2026-01-05', 300, NULL, NULL, 'Staff'),
+(21, '2025-10-15', 300, 'Bacterial infection outbreak', 'Broad-spectrum antibiotics'),
+(21, '2025-11-01', 500, 'Infection spreading', 'Increased medication dosage'),
+(21, '2025-11-20', 400, 'Still infected', 'Continued treatment protocol'),
+(21, '2025-12-10', 300, 'Stabilizing', 'Preventive care'),
+(21, '2026-01-05', 300, 'Improving', NULL),
 
-(22, '2025-11-20', 400, 'Viral disease', 'Quarantine + supportive care', 'Dr. Ali'),
-(22, '2025-12-05', 350, 'Viral disease', 'Continued isolation', 'Dr. Ali'),
-(22, '2025-12-25', 250, NULL, 'Recovery phase', 'Staff'),
-(22, '2026-01-15', 200, NULL, NULL, 'Staff'),
+(22, '2025-11-20', 400, 'Viral disease suspected', 'Quarantine and supportive care'),
+(22, '2025-12-05', 350, 'Virus confirmed', 'Continued isolation'),
+(22, '2025-12-25', 250, 'Recovery started', 'Recovery phase support'),
+(22, '2026-01-15', 200, 'Recovered', NULL),
 
-(23, '2025-11-10', 350, 'Temperature stress', 'Water cooling measures', 'Dr. Akter'),
-(23, '2025-12-01', 250, NULL, 'Improved conditions', 'Staff'),
-(23, '2025-12-20', 200, NULL, NULL, 'Staff'),
-(23, '2026-01-10', 200, NULL, NULL, 'Staff');
+(23, '2025-11-10', 350, 'Temperature stress event', 'Water cooling measures'),
+(23, '2025-12-01', 250, 'Temperature stabilized', 'Improved conditions'),
+(23, '2025-12-20', 200, 'Normal range', NULL),
+(23, '2026-01-10', 200, 'Good health', NULL);
 
 -- ============================================================================
 -- OPERATIONAL DATA: Water Quality Logs (40 entries)
@@ -404,15 +404,15 @@ INSERT INTO water_log (tank_id, measured_at, ph_level, temperature, dissolved_ox
 -- COMMERCIAL DATA: Customers
 -- ============================================================================
 
-INSERT INTO customer (company_name, contact_person, email, phone, address, registration_date) VALUES
-('Fresh Fish Market Ltd', 'Abdul Hamid', 'hamid@freshfish.com', '+880-1711-111111', 'Kawran Bazar, Dhaka', '2020-05-10'),
-('Ocean Breeze Seafood', 'Fatema Khan', 'info@oceanbreezebd.com', '+880-1811-222222', 'Agrabad, Chittagong', '2021-03-15'),
-('Golden Harvest Exports', 'Mohammad Hossain', 'export@goldenharvest.com', '+880-1911-333333', 'Khulna Export Zone', '2019-08-20'),
-('Royal Restaurant Chain', 'Rashida Begum', 'purchase@royalbd.com', '+880-1611-444444', 'Gulshan, Dhaka', '2022-01-05'),
-('Dhaka Wholesale Fish', 'Kamal Uddin', 'kamal@dhakawholesale.com', '+880-1711-555555', 'Karwan Bazar, Dhaka', '2020-11-12'),
-('Coastal Traders', 'Nasrin Akter', 'trade@coastalbd.com', '+880-1811-666666', 'Chittagong Port', '2021-06-18'),
-('Premium Seafood Supplier', 'Rahman Ali', 'contact@premiumseafood.com', '+880-1911-777777', 'Uttara, Dhaka', '2022-04-22'),
-('Export Quality Fish Ltd', 'Jahangir Alam', 'jahangir@exportfish.com', '+880-1611-888888', 'Khulna Industrial Area', '2020-09-30');
+INSERT INTO customer (company_name, contact_person, contact_email, phone, address, country_code, registration_date) VALUES
+('Fresh Fish Market Ltd', 'Abdul Hamid', 'hamid@freshfish.com', '+880-1711-111111', 'Kawran Bazar, Dhaka', 'BGD', '2020-05-10'),
+('Ocean Breeze Seafood', 'Fatema Khan', 'info@oceanbreezebd.com', '+880-1811-222222', 'Agrabad, Chittagong', 'BGD', '2021-03-15'),
+('Golden Harvest Exports', 'Mohammad Hossain', 'export@goldenharvest.com', '+880-1911-333333', 'Khulna Export Zone', 'USA', '2019-08-20'),
+('Royal Restaurant Chain', 'Rashida Begum', 'purchase@royalbd.com', '+880-1611-444444', 'Gulshan, Dhaka', 'BGD', '2022-01-05'),
+('Dhaka Wholesale Fish', 'Kamal Uddin', 'kamal@dhakawholesale.com', '+880-1711-555555', 'Karwan Bazar, Dhaka', 'BGD', '2020-11-12'),
+('Coastal Traders', 'Nasrin Akter', 'trade@coastalbd.com', '+880-1811-666666', 'Chittagong Port', 'JPN', '2021-06-18'),
+('Premium Seafood Supplier', 'Rahman Ali', 'contact@premiumseafood.com', '+880-1911-777777', 'Uttara, Dhaka', 'BGD', '2022-04-22'),
+('Export Quality Fish Ltd', 'Jahangir Alam', 'jahangir@exportfish.com', '+880-1611-888888', 'Khulna Industrial Area', 'DEU', '2020-09-30');
 
 -- ============================================================================
 -- COMMERCIAL DATA: Customer Orders
@@ -444,64 +444,64 @@ INSERT INTO customer_order (customer_id, order_date, total_value, delivery_addre
 -- ============================================================================
 
 -- Order 1 (delivered)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (1, 1, 2000, 65.00),   -- Tilapia
 (1, 3, 1500, 55.00);   -- Pangas
 
 -- Order 2 (delivered)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (2, 2, 3000, 70.00),   -- Catfish
 (2, 5, 1000, 180.00);  -- Shrimp
 
 -- Order 3 (delivered)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (3, 4, 2500, 90.00),   -- Rui
 (3, 5, 1500, 180.00),  -- Shrimp
 (3, 1, 2000, 65.00);   -- Tilapia
 
 -- Order 4 (shipped)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (4, 1, 2500, 65.00),   -- Tilapia
 (4, 3, 1000, 55.00);   -- Pangas
 
 -- Order 5 (shipped)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (5, 2, 1200, 70.00),   -- Catfish
 (5, 4, 300, 90.00);    -- Rui
 
 -- Order 6 (processing)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (6, 1, 2000, 65.00),   -- Tilapia
 (6, 3, 800, 55.00);    -- Pangas
 
 -- Order 7 (processing)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (7, 2, 3500, 70.00),   -- Catfish
 (7, 5, 500, 180.00);   -- Shrimp
 
 -- Order 8 (pending)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (8, 3, 5000, 55.00),   -- Pangas
 (8, 1, 1000, 65.00);   -- Tilapia
 
 -- Order 9 (pending)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (9, 5, 2000, 180.00),  -- Shrimp
 (9, 4, 1800, 90.00),   -- Rui
 (9, 2, 1500, 70.00);   -- Catfish
 
 -- Order 10 (pending)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (10, 1, 1500, 65.00),  -- Tilapia
 (10, 3, 1000, 55.00);  -- Pangas
 
 -- Order 11 (pending)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (11, 4, 2500, 90.00),  -- Rui
 (11, 5, 1200, 180.00); -- Shrimp
 
 -- Order 12 (pending)
-INSERT INTO order_item (order_id, species_id, quantity, unit_price) VALUES
+INSERT INTO order_item (order_id, species_id, quantity_requested, unit_price) VALUES
 (12, 2, 1500, 70.00),  -- Catfish
 (12, 1, 500, 65.00);   -- Tilapia
 
