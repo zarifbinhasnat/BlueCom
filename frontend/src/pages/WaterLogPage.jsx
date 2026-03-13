@@ -38,7 +38,7 @@ export default function WaterLogPage() {
                 temperature: parseFloat(form.temperature),
                 dissolved_oxygen: parseFloat(form.dissolved_oxygen),
                 ammonia_level: parseFloat(form.ammonia_level),
-                measured_by_user_id: 1 // Default or from context
+                measured_by_user_id: null
             });
             setModalOpen(false);
             loadData();

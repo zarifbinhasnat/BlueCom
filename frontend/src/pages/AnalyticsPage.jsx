@@ -43,7 +43,7 @@ export default function AnalyticsPage() {
         labels: mortality.map(m => m.species || m.common_name || 'Unknown'),
         datasets: [{
             label: 'Mortality Rate (%)',
-            data: mortality.map(m => parseFloat(m.mortality_rate || m.avg_mortality_rate || 0)),
+            data: mortality.map(m => parseFloat(m.overall_mortality_rate || m.avg_batch_mortality_rate || 0)),
             backgroundColor: '#c44a3f',
             borderRadius: 6,
             borderSkipped: false,
@@ -135,7 +135,7 @@ export default function AnalyticsPage() {
                                             <td style={{ fontWeight: 600 }}>{m.species || m.common_name || 'Unknown'}</td>
                                             <td>{m.total_batches || m.batch_count || '—'}</td>
                                             <td>{m.total_deaths || m.total_mortality || '—'}</td>
-                                            <td>{parseFloat(m.mortality_rate || m.avg_mortality_rate || 0).toFixed(2)}%</td>
+                                            <td>{parseFloat(m.overall_mortality_rate || m.avg_batch_mortality_rate || 0).toFixed(2)}%</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -161,8 +161,8 @@ export default function AnalyticsPage() {
                                             <td>#{p.batch_id}</td>
                                             <td style={{ fontWeight: 600 }}>{p.species || p.common_name || '—'}</td>
                                             <td>{p.farm_name || '—'}</td>
-                                            <td>${parseFloat(p.total_production_cost || p.production_cost || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                                            <td style={{ fontWeight: 600, color: 'var(--accent)' }}>${parseFloat(p.suggested_price || p.selling_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                            <td>${parseFloat(p.total_cost || p.total_production_cost || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                                            <td style={{ fontWeight: 600, color: 'var(--accent)' }}>${parseFloat(p.recommended_price || p.suggested_price || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                                             <td>{p.target_profit_margin ? `${((parseFloat(p.target_profit_margin) - 1) * 100).toFixed(0)}%` : '—'}</td>
                                         </tr>
                                     ))}

@@ -481,7 +481,7 @@ BEGIN
                NEW.ph_level > v_batch_record.ideal_ph_max + 1.0 THEN
                 v_severity := 'critical';
                 v_alert_message := format(
-                    'CRITICAL: pH level %.2f is dangerously out of range for %s (ideal: %.2f-%.2f)',
+                    'CRITICAL: pH level %s is dangerously out of range for %s (ideal: %s-%s)',
                     NEW.ph_level, v_batch_record.common_name,
                     v_batch_record.ideal_ph_min, v_batch_record.ideal_ph_max
                 );
@@ -493,7 +493,7 @@ BEGIN
                   NEW.ph_level > v_batch_record.ideal_ph_max THEN
                 v_severity := 'high';
                 v_alert_message := format(
-                    'WARNING: pH level %.2f is outside ideal range for %s (ideal: %.2f-%.2f)',
+                    'WARNING: pH level %s is outside ideal range for %s (ideal: %s-%s)',
                     NEW.ph_level, v_batch_record.common_name,
                     v_batch_record.ideal_ph_min, v_batch_record.ideal_ph_max
                 );
@@ -509,7 +509,7 @@ BEGIN
                NEW.temperature > v_batch_record.ideal_temp_max + 3.0 THEN
                 v_severity := 'critical';
                 v_alert_message := format(
-                    'CRITICAL: Temperature %.2f°C is dangerously out of range for %s (ideal: %.2f-%.2f°C)',
+                    'CRITICAL: Temperature %s°C is dangerously out of range for %s (ideal: %s-%s°C)',
                     NEW.temperature, v_batch_record.common_name,
                     v_batch_record.ideal_temp_min, v_batch_record.ideal_temp_max
                 );
@@ -521,7 +521,7 @@ BEGIN
                   NEW.temperature > v_batch_record.ideal_temp_max THEN
                 v_severity := 'high';
                 v_alert_message := format(
-                    'WARNING: Temperature %.2f°C is outside ideal range for %s (ideal: %.2f-%.2f°C)',
+                    'WARNING: Temperature %s°C is outside ideal range for %s (ideal: %s-%s°C)',
                     NEW.temperature, v_batch_record.common_name,
                     v_batch_record.ideal_temp_min, v_batch_record.ideal_temp_max
                 );
@@ -535,7 +535,7 @@ BEGIN
         IF NEW.ammonia_level IS NOT NULL AND NEW.ammonia_level > 0.5 THEN
             v_severity := CASE WHEN NEW.ammonia_level > 1.0 THEN 'critical' ELSE 'high' END;
             v_alert_message := format(
-                'Ammonia level %.3f ppm exceeds safe threshold in tank containing %s',
+                'Ammonia level %s ppm exceeds safe threshold in tank containing %s',
                 NEW.ammonia_level, v_batch_record.common_name
             );
             

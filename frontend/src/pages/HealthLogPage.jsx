@@ -36,7 +36,7 @@ export default function HealthLogPage() {
                 condition_notes: form.condition_notes,
                 treatment_applied: form.treatment_applied,
                 mortality_count: form.mortality_count ? parseInt(form.mortality_count) : 0,
-                recorded_by: 1
+                recorded_by: null
             });
             setModalOpen(false);
             loadData();

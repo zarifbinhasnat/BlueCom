@@ -37,7 +37,7 @@ export default function FeedingLogPage() {
                 amount_grams: parseFloat(form.amount_grams),
                 cost_per_kg: parseFloat(form.cost_per_kg),
                 notes: form.notes,
-                recorded_by: 1
+                recorded_by: null
             });
             setModalOpen(false);
             loadData();
